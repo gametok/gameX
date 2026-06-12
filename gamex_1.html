@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GameX — Rare Clips, Legendary Moments</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #0A0A0F;
+    --deep: #0F0F1A;
+    --slate: #1A1A2E;
+    --violet: #7B2FFF;
+    --violet-dim: #4A1A99;
+    --cyan: #00F5FF;
+    --cyan-dim: #009BA8;
+    --white: #E8E8F0;
+    --muted: #6B6B8A;
+    --card-bg: #12121F;
+    --border: #2A2A3E;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 40px;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 1.6rem;
+    letter-spacing: 0.08em;
+    background: linear-gradient(90deg, var(--violet), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    cursor: pointer;
+  }
+  .logo span { font-size: 1.6em; vertical-align: middle; color: var(--cyan); -webkit-text-fill-color: var(--cyan); }
+  nav ul { list-style: none; display: flex; gap: 32px; }
+  nav ul li a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  nav ul li a:hover { color: var(--cyan); }
+  .nav-actions { display: flex; gap: 12px; align-items: center; }
+  .btn-ghost {
+    background: none; border: 1px solid var(--border);
+    color: var(--white); padding: 8px 20px;
+    border-radius: 4px; cursor: pointer;
+    font-family: 'Inter', sans-serif; font-size: 0.85rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+  .btn-upload-highlight {
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    border: none; color: #fff;
+    padding: 8px 22px; border-radius: 4px;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+    font-size: 0.85rem; font-weight: 700;
+    letter-spacing: 0.04em;
+    box-shadow: 0 0 18px rgba(0,245,255,0.45), 0 0 36px rgba(123,47,255,0.25);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative; overflow: hidden;
+    animation: uploadPulse 2.5s ease-in-out infinite;
+  }
+  .btn-upload-highlight::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.18), transparent 60%);
+    pointer-events: none;
+  }
+  .btn-upload-highlight:hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 0 28px rgba(0,245,255,0.7), 0 0 56px rgba(123,47,255,0.45);
+  }
+  @keyframes uploadPulse {
+    0%, 100% { box-shadow: 0 0 18px rgba(0,245,255,0.45), 0 0 36px rgba(123,47,255,0.25); }
+    50%       { box-shadow: 0 0 30px rgba(0,245,255,0.75), 0 0 60px rgba(123,47,255,0.5); }
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--violet), #5B1FDF);
+    border: none; color: #fff;
+    padding: 8px 22px; border-radius: 4px;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+    font-size: 0.85rem; font-weight: 600;
+    transition: opacity 0.2s, transform 0.15s;
+    position: relative; overflow: hidden;
+  }
+  .btn-primary::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .btn-primary:hover::after { opacity: 1; }
+  .btn-primary:hover { transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center;
+    padding: 100px 40px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(123,47,255,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 80% 20%, rgba(0,245,255,0.08) 0%, transparent 60%),
+      var(--black);
+  }
+  /* scanline texture */
+  .hero-bg::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+  }
+
+  /* floating grid decoration */
+  .grid-deco {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(123,47,255,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(123,47,255,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 90% 70% at 50% 50%, black 20%, transparent 80%);
+  }
+
+  .hero-eyebrow {
+    position: relative; z-index: 1;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem; letter-spacing: 0.25em;
+    color: var(--cyan); text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-eyebrow::before, .hero-eyebrow::after {
+    content: ''; display: block;
+    width: 40px; height: 1px;
+    background: var(--cyan-dim);
+  }
+
+  h1 {
+    position: relative; z-index: 1;
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: clamp(2.8rem, 7vw, 6rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin-bottom: 24px;
+  }
+  h1 .line1 { display: block; color: var(--white); }
+  h1 .line2 {
+    display: block;
+    background: linear-gradient(90deg, var(--violet) 0%, var(--cyan) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    position: relative; z-index: 1;
+    font-size: 1.05rem; color: var(--muted);
+    max-width: 500px; line-height: 1.7;
+    margin-bottom: 40px;
+  }
+
+  .hero-cta {
+    position: relative; z-index: 1;
+    display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
+  }
+  .btn-xl {
+    padding: 14px 36px; font-size: 0.95rem; font-weight: 600;
+    border-radius: 4px; cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.03em;
+  }
+  .btn-xl.primary {
+    background: linear-gradient(135deg, var(--violet), #5B1FDF);
+    border: none; color: #fff;
+    box-shadow: 0 0 32px rgba(123,47,255,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-xl.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 48px rgba(123,47,255,0.6);
+  }
+  .btn-xl.secondary {
+    background: none; border: 1px solid var(--border);
+    color: var(--white);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-xl.secondary:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  .hero-stats {
+    position: relative; z-index: 1;
+    margin-top: 64px;
+    display: flex; gap: 56px; justify-content: center; flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem; font-weight: 700;
+    background: linear-gradient(90deg, var(--violet), var(--cyan));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stat-label { font-size: 0.75rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px; }
+
+  /* ── TICKER ── */
+  .ticker-wrap {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden; padding: 12px 0;
+    background: var(--deep);
+  }
+  .ticker {
+    display: flex; gap: 64px;
+    animation: ticker 28s linear infinite;
+    white-space: nowrap;
+  }
+  .ticker:hover { animation-play-state: paused; }
+  .ticker-item {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem; letter-spacing: 0.15em;
+    color: var(--muted); flex-shrink: 0;
+  }
+  .ticker-item span { color: var(--violet); margin-right: 8px; }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ── SECTION HEADERS ── */
+  section { padding: 80px 40px; max-width: 1300px; margin: 0 auto; }
+  .section-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.65rem; letter-spacing: 0.25em;
+    color: var(--cyan); text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 700; margin-bottom: 8px;
+  }
+  .section-sub { font-size: 0.9rem; color: var(--muted); margin-bottom: 48px; }
+
+  /* ── FEATURED CLIP (big) ── */
+  .featured-section { max-width: 1300px; margin: 0 auto; padding: 80px 40px 40px; }
+  .featured-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 24px;
+  }
+
+  .clip-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    position: relative;
+  }
+  .clip-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--violet);
+    box-shadow: 0 8px 40px rgba(123,47,255,0.2);
+  }
+
+  /* scanline hover effect on card */
+  .clip-thumb {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16/9;
+    background: var(--slate);
+  }
+  .clip-thumb::before {
+    content: '';
+    position: absolute; inset: 0; z-index: 2;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 3px,
+      rgba(0,0,0,0.1) 3px, rgba(0,0,0,0.1) 4px
+    );
+    opacity: 0; transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .clip-card:hover .clip-thumb::before { opacity: 1; }
+
+  .clip-thumb-inner {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3rem;
+    position: relative;
+  }
+  .clip-thumb-inner.game1 { background: linear-gradient(135deg, #1a0033 0%, #2d0057 40%, #0d001a 100%); }
+  .clip-thumb-inner.game2 { background: linear-gradient(135deg, #001a33 0%, #002d57 40%, #000d1a 100%); }
+  .clip-thumb-inner.game3 { background: linear-gradient(135deg, #1a1a00 0%, #2d2d00 40%, #0d0d00 100%); }
+  .clip-thumb-inner.game4 { background: linear-gradient(135deg, #1a0010 0%, #2d0020 40%, #0d000a 100%); }
+  .clip-thumb-inner.game5 { background: linear-gradient(135deg, #001a1a 0%, #002d2d 40%, #000d0d 100%); }
+  .clip-thumb-inner.game6 { background: linear-gradient(135deg, #0a0a1a 0%, #141428 40%, #050510 100%); }
+
+  /* play button overlay */
+  .play-btn {
+    position: absolute; z-index: 3;
+    width: 52px; height: 52px;
+    background: rgba(123,47,255,0.85);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transform: scale(0.8);
+    transition: opacity 0.25s, transform 0.25s;
+    backdrop-filter: blur(4px);
+    border: 1.5px solid rgba(255,255,255,0.2);
+  }
+  .play-btn svg { margin-left: 4px; }
+  .clip-card:hover .play-btn { opacity: 1; transform: scale(1); }
+
+  .clip-badge {
+    position: absolute; top: 12px; left: 12px; z-index: 4;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.6rem; letter-spacing: 0.12em;
+    padding: 4px 10px; border-radius: 2px;
+    text-transform: uppercase;
+  }
+  .badge-rare { background: rgba(123,47,255,0.85); color: #fff; }
+  .badge-epic { background: rgba(0,245,255,0.85); color: #000; }
+  .badge-legendary {
+    background: linear-gradient(90deg, #FFB800, #FF6B00);
+    color: #000;
+  }
+  .badge-hot { background: rgba(255,50,50,0.85); color: #fff; }
+
+  .clip-duration {
+    position: absolute; bottom: 10px; right: 10px; z-index: 4;
+    background: rgba(0,0,0,0.7); color: var(--white);
+    font-size: 0.72rem; padding: 3px 7px; border-radius: 3px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .clip-info { padding: 16px 18px 18px; }
+  .clip-title {
+    font-weight: 600; font-size: 0.95rem;
+    margin-bottom: 8px; line-height: 1.4;
+  }
+  .clip-meta {
+    display: flex; gap: 16px; align-items: center;
+    font-size: 0.78rem; color: var(--muted);
+  }
+  .clip-game { color: var(--violet); font-weight: 500; }
+  .clip-author {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .avatar {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.65rem; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .av1 { background: linear-gradient(135deg, #7B2FFF, #00F5FF); color: #fff; }
+  .av2 { background: linear-gradient(135deg, #FF6B00, #FFB800); color: #000; }
+  .av3 { background: linear-gradient(135deg, #00F5FF, #7B2FFF); color: #fff; }
+  .av4 { background: linear-gradient(135deg, #FF2D55, #7B2FFF); color: #fff; }
+  .av5 { background: linear-gradient(135deg, #30D158, #00F5FF); color: #000; }
+  .av6 { background: linear-gradient(135deg, #FFB800, #FF2D55); color: #000; }
+
+  .clip-views { display: flex; align-items: center; gap: 4px; }
+
+  .clip-actions {
+    display: flex; gap: 12px; margin-top: 12px;
+    padding-top: 12px; border-top: 1px solid var(--border);
+  }
+  .action-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); font-size: 0.78rem;
+    display: flex; align-items: center; gap: 5px;
+    font-family: 'Inter', sans-serif;
+    transition: color 0.2s;
+    padding: 4px 0;
+  }
+  .action-btn:hover { color: var(--cyan); }
+  .action-btn.liked { color: var(--violet); }
+
+  /* side stack */
+  .featured-side { display: flex; flex-direction: column; gap: 24px; }
+
+  /* ── CLIPS GRID ── */
+  .clips-section { max-width: 1300px; margin: 0 auto; padding: 40px 40px 80px; }
+  .clips-filter {
+    display: flex; gap: 10px; margin-bottom: 40px;
+    flex-wrap: wrap; align-items: center;
+  }
+  .filter-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 7px 18px; border-radius: 40px;
+    font-size: 0.8rem; cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--violet);
+    color: var(--white);
+    background: rgba(123,47,255,0.12);
+  }
+  .filter-btn.active { color: var(--violet); }
+
+  .clips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  /* ── UPLOAD MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 40px;
+    width: 100%; max-width: 540px;
+    position: relative;
+    animation: modalIn 0.3s ease;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .modal-close {
+    position: absolute; top: 16px; right: 16px;
+    background: none; border: none; color: var(--muted);
+    cursor: pointer; font-size: 1.2rem; transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--white); }
+  .modal-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.2rem; font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .modal-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 28px; }
+
+  .dropzone {
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 48px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    margin-bottom: 20px;
+  }
+  .dropzone:hover, .dropzone.dragover {
+    border-color: var(--violet);
+    background: rgba(123,47,255,0.05);
+  }
+  .dropzone-icon { font-size: 2.4rem; margin-bottom: 12px; }
+  .dropzone p { font-size: 0.9rem; color: var(--muted); }
+  .dropzone span { color: var(--violet); font-weight: 500; }
+  .dropzone small { display: block; margin-top: 6px; font-size: 0.75rem; color: var(--muted); }
+
+  .form-row { margin-bottom: 16px; }
+  .form-row label {
+    display: block; font-size: 0.8rem; font-weight: 500;
+    margin-bottom: 6px; color: var(--muted);
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .form-row input, .form-row select, .form-row textarea {
+    width: 100%; background: var(--slate);
+    border: 1px solid var(--border);
+    border-radius: 4px; color: var(--white);
+    padding: 10px 14px; font-family: 'Inter', sans-serif;
+    font-size: 0.9rem; transition: border-color 0.2s;
+    outline: none;
+  }
+  .form-row input:focus, .form-row select:focus, .form-row textarea:focus {
+    border-color: var(--violet);
+  }
+  .form-row select { appearance: none; }
+  .form-row textarea { resize: vertical; min-height: 80px; }
+
+  .form-row select option { background: var(--slate); }
+
+  .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
+  .modal-actions .btn-primary { flex: 1; padding: 12px; font-size: 0.9rem; }
+  .modal-actions .btn-ghost { padding: 12px 20px; }
+
+  /* ── LEADERBOARD ── */
+  .leaderboard-section {
+    max-width: 1300px; margin: 0 auto; padding: 40px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+  }
+  .lb-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 28px;
+  }
+  .lb-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem; font-weight: 700;
+    margin-bottom: 24px; display: flex; align-items: center; gap: 10px;
+  }
+  .lb-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .lb-dot.violet { background: var(--violet); box-shadow: 0 0 8px var(--violet); }
+  .lb-dot.cyan { background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+
+  .lb-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .lb-row:last-child { border-bottom: none; }
+  .lb-rank {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem; color: var(--muted);
+    width: 20px; text-align: center;
+  }
+  .lb-rank.gold { color: #FFB800; }
+  .lb-rank.silver { color: #B0B0C8; }
+  .lb-rank.bronze { color: #CD7F32; }
+  .lb-name { flex: 1; font-size: 0.9rem; font-weight: 500; }
+  .lb-val {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem; color: var(--muted);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    max-width: 1300px; margin: 0 auto;
+    flex-wrap: wrap; gap: 20px;
+  }
+  .footer-logo { font-family: 'Orbitron', monospace; font-weight: 900; font-size: 1.2rem; }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.8rem; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--cyan); }
+  .footer-right { font-size: 0.75rem; color: var(--muted); }
+
+  /* ── NOTIFICATION TOAST ── */
+  .toast {
+    position: fixed; bottom: 32px; right: 32px; z-index: 300;
+    background: var(--card-bg);
+    border: 1px solid var(--violet);
+    border-radius: 6px; padding: 14px 20px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 8px 32px rgba(123,47,255,0.3);
+    transform: translateX(120%);
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    min-width: 280px;
+  }
+  .toast.show { transform: translateX(0); }
+  .toast-icon { font-size: 1.2rem; }
+  .toast-msg { font-size: 0.88rem; }
+  .toast-msg strong { display: block; font-weight: 600; margin-bottom: 2px; }
+  .toast-msg span { color: var(--muted); font-size: 0.8rem; }
+
+  /* ── LIVE BADGE ── */
+  .live-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,50,50,0.15); border: 1px solid rgba(255,50,50,0.4);
+    color: #FF3232; padding: 4px 10px; border-radius: 2px;
+    font-size: 0.65rem; font-family: 'Orbitron', monospace;
+    letter-spacing: 0.12em;
+  }
+  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #FF3232; animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  /* responsive */
+  @media (max-width: 900px) {
+    nav ul { display: none; }
+    .featured-grid { grid-template-columns: 1fr; }
+    .leaderboard-section { grid-template-columns: 1fr; }
+    nav { padding: 14px 20px; }
+    section, .featured-section, .clips-section, .leaderboard-section { padding: 48px 20px; }
+    footer { padding: 32px 20px; }
+  }
+  @media (max-width: 600px) {
+    .hero-stats { gap: 32px; }
+    .clips-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── SHORTS PAGE OVERLAY ── */
+  #shortsPage {
+    display: none;
+    position: fixed; inset: 0; z-index: 200;
+    background: #000;
+    flex-direction: column;
+  }
+  #shortsPage.open { display: flex; }
+
+  .shorts-topbar {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, transparent 100%);
+  }
+  .shorts-topbar-logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900; font-size: 1.1rem;
+    background: linear-gradient(90deg, var(--violet), var(--cyan));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .shorts-close {
+    background: rgba(255,255,255,0.12); border: none; color: #fff;
+    width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
+    font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .shorts-close:hover { background: rgba(255,255,255,0.25); }
+
+  .shorts-feed {
+    width: 100%; height: 100%;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .shorts-feed::-webkit-scrollbar { display: none; }
+
+  .reel {
+    width: 100%; height: 100vh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .reel-bg {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .reel-bg-emoji {
+    font-size: clamp(6rem, 18vw, 12rem);
+    opacity: 0.22;
+    user-select: none;
+    filter: blur(3px);
+  }
+
+  .reel::before {
+    content: '';
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(
+      to top,
+      rgba(0,0,0,0.92) 0%,
+      rgba(0,0,0,0.3) 40%,
+      rgba(0,0,0,0.1) 70%,
+      rgba(0,0,0,0.4) 100%
+    );
+  }
+
+  .reel-play-icon {
+    position: absolute; z-index: 2;
+    font-size: 4rem; opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+  }
+  .reel.paused .reel-play-icon { opacity: 1; }
+
+  .reel-progress-bar {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 5;
+    height: 3px; background: rgba(255,255,255,0.2);
+  }
+  .reel-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--violet), var(--cyan));
+    width: 0%;
+    transition: width 0.12s linear;
+  }
+
+  .reel-info {
+    position: absolute; bottom: 0; left: 0; right: 72px; z-index: 3;
+    padding: 20px 16px 34px;
+  }
+  .reel-user {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+  }
+  .reel-avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+    border: 2px solid rgba(255,255,255,0.35);
+  }
+  .reel-username { font-weight: 700; font-size: 0.95rem; color: #fff; }
+  .reel-follow-btn {
+    background: none; border: 1px solid rgba(255,255,255,0.6);
+    color: #fff; padding: 3px 12px; border-radius: 4px;
+    font-size: 0.72rem; cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: all 0.2s; margin-left: 4px;
+  }
+  .reel-follow-btn.following { background: var(--violet); border-color: var(--violet); }
+  .reel-caption {
+    font-size: 0.88rem; color: rgba(255,255,255,0.9);
+    line-height: 1.5; margin-bottom: 10px;
+  }
+  .reel-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .reel-tag { font-size: 0.78rem; color: var(--cyan); font-weight: 500; }
+
+  .reel-actions {
+    position: absolute; bottom: 90px; right: 10px; z-index: 3;
+    display: flex; flex-direction: column; align-items: center; gap: 20px;
+  }
+  .reel-action-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    cursor: pointer; user-select: none;
+  }
+  .reel-action-icon {
+    width: 46px; height: 46px; border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; transition: transform 0.2s, background 0.2s;
+    backdrop-filter: blur(4px);
+  }
+  .reel-action-btn:hover .reel-action-icon { transform: scale(1.15); background: rgba(255,255,255,0.22); }
+  .reel-action-btn.liked .reel-action-icon { background: rgba(255,45,85,0.45); }
+  .reel-action-count { font-size: 0.72rem; color: rgba(255,255,255,0.85); font-weight: 500; }
+
+  .reel-music {
+    position: absolute; bottom: 30px; right: 14px; z-index: 3;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.74rem; color: rgba(255,255,255,0.7);
+  }
+  .reel-music-disc {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--violet), var(--cyan));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+    animation: spin 4s linear infinite;
+  }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  .shorts-dots {
+    position: fixed; right: 6px; top: 50%; transform: translateY(-50%);
+    z-index: 220;
+    display: none; flex-direction: column; gap: 6px; align-items: center;
+  }
+  #shortsPage.open ~ .shorts-dots,
+  .shorts-dots.visible { display: flex; }
+  .shorts-dot {
+    width: 4px; border-radius: 4px; background: rgba(255,255,255,0.25);
+    transition: height 0.3s, background 0.3s;
+    height: 14px; cursor: pointer;
+  }
+  .shorts-dot.active { height: 26px; background: linear-gradient(to bottom, var(--violet), var(--cyan)); }
+
+  .swipe-hint {
+    position: absolute; bottom: 130px; left: 50%; transform: translateX(-50%);
+    z-index: 4;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    opacity: 1; transition: opacity 0.6s;
+    pointer-events: none;
+  }
+  .swipe-hint.gone { opacity: 0; }
+  .swipe-arrow { font-size: 1.4rem; animation: bounceUp 1.2s ease-in-out infinite; }
+  .swipe-hint span { font-size: 0.7rem; color: rgba(255,255,255,0.55); letter-spacing: 0.12em; text-transform: uppercase; }
+  @keyframes bounceUp { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+  /* Game color themes per reel */
+  .reel-theme-1 { background: linear-gradient(160deg, #0d0019 0%, #1a003d 50%, #0a0a0f 100%); }
+  .reel-theme-2 { background: linear-gradient(160deg, #001326 0%, #002a4a 50%, #000d1a 100%); }
+  .reel-theme-3 { background: linear-gradient(160deg, #1a0800 0%, #3d1500 50%, #0d0400 100%); }
+  .reel-theme-4 { background: linear-gradient(160deg, #001a0d 0%, #003320 50%, #000d06 100%); }
+  .reel-theme-5 { background: linear-gradient(160deg, #1a001a 0%, #330033 50%, #0d000d 100%); }
+  .reel-theme-6 { background: linear-gradient(160deg, #0d0d1a 0%, #1a1a33 50%, #050510 100%); }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">GAME<span>X</span></div>
+  <ul>
+    <li><a href="#featured">Featured</a></li>
+    <li><a href="#clips">Browse</a></li>
+    <li><a href="#" onclick="openShorts();return false;" style="color:var(--cyan);">⚡ Shorts</a></li>
+    <li><a href="#leaderboard">Leaderboard</a></li>
+    <li><a href="#upload">Upload</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="btn-upload-highlight" onclick="openModal()">↑ Upload Clip</button>
+    <button class="btn-primary">Sign In</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-bg"></div>
+  <div class="grid-deco"></div>
+
+  <div class="hero-eyebrow">
+    <span class="live-badge"><span class="live-dot"></span> Live</span>
+    Gamer-built clip vault
+  </div>
+
+  <h1>
+    <span class="line1">Capture the Rare</span>
+    <span class="line2">Gaming Moments</span>
+  </h1>
+
+  <p class="hero-sub">
+    GameX is where gamers can react and upload their rare gaming moments, insane plays, and once-in-a-season clips live forever. Upload yours. Watch theirs. Legend starts here.
+  </p>
+
+  <div class="hero-cta">
+    <button class="btn-xl primary" onclick="document.getElementById('clips').scrollIntoView({behavior:'smooth'})">
+      Browse Clips
+    </button>
+    <button class="btn-xl secondary" onclick="openModal()">
+      ↑ Upload Now
+    </button>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num" id="clipCount">48,291</div>
+      <div class="stat-label">Clips Uploaded</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">12,847</div>
+      <div class="stat-label">Active Players</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3.2M</div>
+      <div class="stat-label">Total Views</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">94</div>
+      <div class="stat-label">Games Covered</div>
+    </div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span class="ticker-item"><span>🎮</span> NEW UPLOAD: 360 no-scope through smoke — Valorant</span>
+    <span class="ticker-item"><span>🔥</span> TRENDING: Solo wipe squad of 4 — Warzone</span>
+    <span class="ticker-item"><span>⚡</span> LEGENDARY: 1v5 clutch on final bomb — CS2</span>
+    <span class="ticker-item"><span>💥</span> RARE: Bug jump exploit patched — Apex Legends</span>
+    <span class="ticker-item"><span>🏆</span> TOP CLIP TODAY: Impossible 180° headshot — Fortnite</span>
+    <span class="ticker-item"><span>🎮</span> NEW UPLOAD: 360 no-scope through smoke — Valorant</span>
+    <span class="ticker-item"><span>🔥</span> TRENDING: Solo wipe squad of 4 — Warzone</span>
+    <span class="ticker-item"><span>⚡</span> LEGENDARY: 1v5 clutch on final bomb — CS2</span>
+    <span class="ticker-item"><span>💥</span> RARE: Bug jump exploit patched — Apex Legends</span>
+    <span class="ticker-item"><span>🏆</span> TOP CLIP TODAY: Impossible 180° headshot — Fortnite</span>
+  </div>
+</div>
+
+<!-- FEATURED -->
+<div class="featured-section" id="featured">
+  <div class="section-label">Featured Clips</div>
+  <div class="section-title">Hall of Frame</div>
+  <p class="section-sub">Top-voted clips this week, handpicked by the community.</p>
+
+  <div class="featured-grid">
+    <!-- Main featured -->
+    <div class="clip-card" onclick="showToast('Now Playing', '1v5 Clutch — &quot;NovaShadow&quot;')">
+      <div class="clip-thumb">
+        <div class="clip-thumb-inner game1">
+          <span>🎯</span>
+          <div class="play-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg>
+          </div>
+        </div>
+        <div class="clip-badge badge-legendary">LEGENDARY</div>
+        <div class="clip-duration">0:47</div>
+      </div>
+      <div class="clip-info">
+        <div class="clip-title">1v5 clutch with a Phantom through Ascent mid — defused with 0.3s left</div>
+        <div class="clip-meta">
+          <span class="clip-game">Valorant</span>
+          <span class="clip-author">
+            <span class="avatar av1">NS</span>
+            NovaShadow
+          </span>
+          <span class="clip-views">👁 284K</span>
+        </div>
+        <div class="clip-actions">
+          <button class="action-btn liked" onclick="event.stopPropagation();likeToggle(this)">
+            ❤️ 18.4K
+          </button>
+          <button class="action-btn" onclick="event.stopPropagation()">💬 942</button>
+          <button class="action-btn" onclick="event.stopPropagation();showToast('Link Copied!','Share this clip with your squad')">🔗 Share</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side clips -->
+    <div class="featured-side">
+      <div class="clip-card" onclick="showToast('Now Playing', 'Ace Round — &quot;VoidSniper_X&quot;')">
+        <div class="clip-thumb">
+          <div class="clip-thumb-inner game2">
+            <span>🔫</span>
+            <div class="play-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg>
+            </div>
+          </div>
+          <div class="clip-badge badge-epic">EPIC</div>
+          <div class="clip-duration">0:32</div>
+        </div>
+        <div class="clip-info">
+          <div class="clip-title">AWP ace through double smoke — CT side round 26</div>
+          <div class="clip-meta">
+            <span class="clip-game">CS2</span>
+            <span class="clip-author"><span class="avatar av2">VX</span>VoidSniper_X</span>
+            <span class="clip-views">👁 91K</span>
+          </div>
+          <div class="clip-actions">
+            <button class="action-btn" onclick="event.stopPropagation();likeToggle(this)">❤️ 7.1K</button>
+            <button class="action-btn" onclick="event.stopPropagation()">💬 381</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="clip-card" onclick="showToast('Now Playing', 'Last circle — &quot;StormChaser99&quot;')">
+        <div class="clip-thumb">
+          <div class="clip-thumb-inner game3">
+            <span>⚡</span>
+            <div class="play-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg>
+            </div>
+          </div>
+          <div class="clip-badge badge-rare">RARE</div>
+          <div class="clip-duration">1:04</div>
+        </div>
+        <div class="clip-info">
+          <div class="clip-title">Final 3 squads in 10 seconds — last circle collapse solo</div>
+          <div class="clip-meta">
+            <span class="clip-game">Warzone</span>
+            <span class="clip-author"><span class="avatar av3">SC</span>StormChaser99</span>
+            <span class="clip-views">👁 143K</span>
+          </div>
+          <div class="clip-actions">
+            <button class="action-btn" onclick="event.stopPropagation();likeToggle(this)">❤️ 11.2K</button>
+            <button class="action-btn" onclick="event.stopPropagation()">💬 620</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CLIPS BROWSE -->
+<div class="clips-section" id="clips">
+  <div class="section-label">Browse All Clips</div>
+  <div class="section-title">Latest Uploads</div>
+
+  <div class="clips-filter">
+    <span style="font-size:0.8rem;color:var(--muted);margin-right:6px">Filter:</span>
+    <button class="filter-btn active" onclick="setFilter(this,'All')">All</button>
+    <button class="filter-btn" onclick="setFilter(this,'Valorant')">Valorant</button>
+    <button class="filter-btn" onclick="setFilter(this,'CS2')">CS2</button>
+    <button class="filter-btn" onclick="setFilter(this,'Warzone')">Warzone</button>
+    <button class="filter-btn" onclick="setFilter(this,'Apex')">Apex Legends</button>
+    <button class="filter-btn" onclick="setFilter(this,'Fortnite')">Fortnite</button>
+    <button class="filter-btn" onclick="setFilter(this,'Elden Ring')">Elden Ring</button>
+  </div>
+
+  <div class="clips-grid" id="clipsGrid">
+
+    <div class="clip-card" onclick="showToast('Now Playing', 'Wingman 1-tap — &quot;PixelReaper&quot;')">
+      <div class="clip-thumb">
+        <div class="clip-thumb-inner game4"><span>💀</span>
+          <div class="play-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg></div>
+        </div>
+        <div class="clip-badge badge-rare">RARE</div>
+        <div class="clip-duration">0:18</div>
+      </div>
+      <div class="clip-info">
+        <div class="clip-title">Wingman headshot through wall on moving target</div>
+        <div class="clip-meta">
+          <span class="clip-game">Apex Legends</span>
+          <span class="clip-author"><span class="avatar av4">PR</span>PixelReaper</span>
+          <span class="clip-views">👁 42K</span>
+        </div>
+        <div class="clip-actions">
+          <button class="action-btn" onclick="event.stopPropagation();likeToggle(this)">❤️ 3.2K</button>
+          <button class="action-btn" onclick="event.stopPropagation()">💬 201</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="clip-card" onclick="showToast('Now Playing', 'Build edit clip — &quot;StructureGod&quot;')">
+      <div class="clip-thumb">
+        <div class="clip-thumb-inner game5"><span>🏗️</span>
+          <div class="play-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg></div>
+        </div>
+        <div class="clip-badge badge-epic">EPIC</div>
+        <div class="clip-duration">0:55</div>
+      </div>
+      <div class="clip-info">
+        <div class="clip-title">360 edit + sniper shot mid-fall on zone rotation</div>
+        <div class="clip-meta">
+          <span class="clip-game">Fortnite</span>
+          <span class="clip-author"><span class="avatar av5">SG</span>StructureGod</span>
+          <span class="clip-views">👁 78K</span>
+        </div>
+        <div class="clip-actions">
+          <button class="action-btn" onclick="event.stopPropagation();likeToggle(this)">❤️ 6.8K</button>
+          <button class="action-btn" onclick="event.stopPropagation()">💬 440</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="clip-card" onclick="showToast('Now Playing', 'Deathbringer parry — &quot;RuneWalker&quot;')">
+      <div class="clip-thumb">
+        <div class="clip-thumb-inner game6"><span>⚔️</span>
+          <div class="play-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg></div>
+        </div>
+        <div class="clip-badge badge-legendary">LEGENDARY</div>
+        <div class="clip-duration">2:12</div>
+      </div>
+      <div class="clip-info">
+        <div class="clip-title">No-hit Malenia run at level 1 — BNS challenge cleared</div>
+        <div class="clip-meta">
+          <span class="clip-game">Elden Ring</span>
+          <span class="clip-author"><span class="avatar av6">RW</span>RuneWalker</span>
+          <span class="clip-views">👁 210K</span>
+        </div>
+        <div class="clip-actions">
+          <button class="action-btn" onclick="event.stopPropagation();likeToggle(this)">❤️ 15.7K</button>
+          <button class="action-btn" onclick="event.stopPropagation()">💬 1.2K</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="clip-card" onclick="showToast('Now Playing', 'Jett dash kill — &quot;BladeFreeze&quot;')">
+      <div class="clip-thumb">
+        <div class="clip-thumb-inner game1"><span>🌪️</span>
+          <div class="play-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg></div>
+        </div>
+        <div class="clip-badge badge-hot">HOT</div>
+        <div class="clip-duration">0:14</div>
+      </div>
+      <div class="clip-info">
+        <div class="clip-title">Jett updraft 4K in under 4 seconds — Diamond ranked</div>
+        <div class="clip-meta">
+          <span class="clip-game">Valorant</span>
+          <span class="clip-author"><span class="avatar av1">BF</span>BladeFreeze</span>
+          <span class="clip-views">👁 54K</span>
+        </div>
+        <div class="clip-actions">
+          <button class="action-btn" onclick="event.stopPropagation();likeToggle(this)">❤️ 4.9K</button>
+          <button class="action-btn" onclick="event.stopPropagation()">💬 315</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="clip-card" onclick="showToast('Now Playing', 'Deagle triple — &quot;IronSight77&quot;')">
+      <div class="clip-thumb">
+        <div class="clip-thumb-inner game2"><span>🎖️</span>
+          <div class="play-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg></div>
+        </div>
+        <div class="clip-badge badge-rare">RARE</div>
+        <div class="clip-duration">0:23</div>
+      </div>
+      <div class="clip-info">
+        <div class="clip-title">Deagle triple kill force buy saves the round in OT</div>
+        <div class="clip-meta">
+          <span class="clip-game">CS2</span>
+          <span class="clip-author"><span class="avatar av2">IS</span>IronSight77</span>
+          <span class="clip-views">👁 29K</span>
+        </div>
+        <div class="clip-actions">
+          <button class="action-btn" onclick="event.stopPropagation();likeToggle(this)">❤️ 2.1K</button>
+          <button class="action-btn" onclick="event.stopPropagation()">💬 177</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="clip-card" onclick="showToast('Now Playing', 'Gibby ult — &quot;ArcThunder&quot;')">
+      <div class="clip-thumb">
+        <div class="clip-thumb-inner game4"><span>🌩️</span>
+          <div class="play-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg></div>
+        </div>
+        <div class="clip-badge badge-epic">EPIC</div>
+        <div class="clip-duration">0:38</div>
+      </div>
+      <div class="clip-info">
+        <div class="clip-title">Gibraltar shield ult reflects rocket perfectly into enemy team</div>
+        <div class="clip-meta">
+          <span class="clip-game">Apex Legends</span>
+          <span class="clip-author"><span class="avatar av3">AT</span>ArcThunder</span>
+          <span class="clip-views">👁 67K</span>
+        </div>
+        <div class="clip-actions">
+          <button class="action-btn" onclick="event.stopPropagation();likeToggle(this)">❤️ 5.3K</button>
+          <button class="action-btn" onclick="event.stopPropagation()">💬 398</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div style="background:var(--deep); padding: 1px 0;" id="leaderboard">
+<div class="leaderboard-section">
+  <div class="lb-card">
+    <div class="lb-title">
+      <div class="lb-dot violet"></div>
+      Top Uploaders This Month
+    </div>
+    <div class="lb-row">
+      <div class="lb-rank gold">01</div>
+      <span class="avatar av1" style="width:28px;height:28px;font-size:0.7rem">NS</span>
+      <div class="lb-name">NovaShadow</div>
+      <div class="lb-val">38 clips · 842K views</div>
+    </div>
+    <div class="lb-row">
+      <div class="lb-rank silver">02</div>
+      <span class="avatar av5" style="width:28px;height:28px;font-size:0.7rem">SG</span>
+      <div class="lb-name">StructureGod</div>
+      <div class="lb-val">24 clips · 601K views</div>
+    </div>
+    <div class="lb-row">
+      <div class="lb-rank bronze">03</div>
+      <span class="avatar av6" style="width:28px;height:28px;font-size:0.7rem">RW</span>
+      <div class="lb-name">RuneWalker</div>
+      <div class="lb-val">19 clips · 540K views</div>
+    </div>
+    <div class="lb-row">
+      <div class="lb-rank">04</div>
+      <span class="avatar av3" style="width:28px;height:28px;font-size:0.7rem">SC</span>
+      <div class="lb-name">StormChaser99</div>
+      <div class="lb-val">15 clips · 421K views</div>
+    </div>
+    <div class="lb-row">
+      <div class="lb-rank">05</div>
+      <span class="avatar av4" style="width:28px;height:28px;font-size:0.7rem">PR</span>
+      <div class="lb-name">PixelReaper</div>
+      <div class="lb-val">12 clips · 289K views</div>
+    </div>
+  </div>
+
+  <div class="lb-card">
+    <div class="lb-title">
+      <div class="lb-dot cyan"></div>
+      Most Viewed Games
+    </div>
+    <div class="lb-row">
+      <div class="lb-rank gold">01</div>
+      <div class="lb-name">Valorant</div>
+      <div class="lb-val">1.2M views</div>
+    </div>
+    <div class="lb-row">
+      <div class="lb-rank silver">02</div>
+      <div class="lb-name">Elden Ring</div>
+      <div class="lb-val">890K views</div>
+    </div>
+    <div class="lb-row">
+      <div class="lb-rank bronze">03</div>
+      <div class="lb-name">CS2</div>
+      <div class="lb-val">744K views</div>
+    </div>
+    <div class="lb-row">
+      <div class="lb-rank">04</div>
+      <div class="lb-name">Warzone</div>
+      <div class="lb-val">531K views</div>
+    </div>
+    <div class="lb-row">
+      <div class="lb-rank">05</div>
+      <div class="lb-name">Apex Legends</div>
+      <div class="lb-val">418K views</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div class="modal-overlay" id="uploadModal" onclick="closeOnOverlay(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">Upload Your Clip</div>
+    <div class="modal-sub">Share your rare moment with the GameX community.</div>
+
+    <div class="dropzone" id="dropzone" onclick="triggerUpload()"
+         ondragover="event.preventDefault();this.classList.add('dragover')"
+         ondragleave="this.classList.remove('dragover')"
+         ondrop="handleDrop(event)">
+      <div class="dropzone-icon">🎬</div>
+      <p><span>Click to choose</span> or drag & drop your clip</p>
+      <small>MP4, MOV, WEBM — max 500MB · max 3 min</small>
+    </div>
+    <input type="file" id="fileInput" accept="video/*" style="display:none" onchange="handleFile(this)">
+
+    <div class="form-row">
+      <label>Clip Title</label>
+      <input type="text" placeholder="Give your moment a name..." id="clipTitle">
+    </div>
+    <div class="form-row">
+      <label>Game</label>
+      <select id="clipGame">
+        <option value="">Select a game...</option>
+        <option>Valorant</option>
+        <option>CS2</option>
+        <option>Apex Legends</option>
+        <option>Warzone</option>
+        <option>Fortnite</option>
+        <option>Elden Ring</option>
+        <option>Overwatch 2</option>
+        <option>League of Legends</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>Description (optional)</label>
+      <textarea placeholder="What makes this clip special?..." id="clipDesc"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="submitUpload()">↑ Publish Clip</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-icon">🎮</div>
+  <div class="toast-msg">
+    <strong id="toastTitle"></strong>
+    <span id="toastSub"></span>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo" style="background:linear-gradient(90deg,var(--violet),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">GAME<span style="font-size:0.55em;vertical-align:super;color:var(--cyan);-webkit-text-fill-color:var(--cyan);">X</span></div>
+  <div class="footer-links">
+    <a href="#">About</a>
+    <a href="#">Rules</a>
+    <a href="#">Privacy</a>
+    <a href="#">Discord</a>
+    <a href="#">Contact</a>
+  </div>
+  <div class="footer-right">© 2026 GameX — All clips belong to their creators.</div>
+</footer>
+
+<script>
+  // Modal
+  function openModal() {
+    document.getElementById('uploadModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('uploadModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function closeOnOverlay(e) {
+    if (e.target === document.getElementById('uploadModal')) closeModal();
+  }
+
+  // File upload
+  function triggerUpload() { document.getElementById('fileInput').click(); }
+  function handleFile(input) {
+    if (input.files[0]) {
+      const name = input.files[0].name;
+      const dz = document.getElementById('dropzone');
+      dz.innerHTML = `<div class="dropzone-icon">✅</div><p><span>${name}</span></p><small>Ready to upload</small>`;
+    }
+  }
+  function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('dropzone').classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('video/')) {
+      const dz = document.getElementById('dropzone');
+      dz.innerHTML = `<div class="dropzone-icon">✅</div><p><span>${file.name}</span></p><small>Ready to upload</small>`;
+    }
+  }
+
+  // Submit
+  function submitUpload() {
+    const title = document.getElementById('clipTitle').value.trim();
+    const game = document.getElementById('clipGame').value;
+    if (!title) { showToast('Missing Title', 'Give your clip a name first.'); return; }
+    if (!game)  { showToast('Select a Game', 'Choose which game this is from.'); return; }
+    closeModal();
+    showToast('Clip Uploaded! 🔥', `"${title}" is now live on GameX`);
+    // bump counter visually
+    const el = document.getElementById('clipCount');
+    const num = parseInt(el.textContent.replace(/,/g,'')) + 1;
+    el.textContent = num.toLocaleString();
+  }
+
+  // Toast
+  let toastTimer;
+  function showToast(title, sub) {
+    clearTimeout(toastTimer);
+    document.getElementById('toastTitle').textContent = title;
+    document.getElementById('toastSub').innerHTML = sub;
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  // Like toggle
+  function likeToggle(btn) {
+    btn.classList.toggle('liked');
+    const num = parseInt(btn.textContent.replace(/[^\d.]/g,''));
+    if (btn.classList.contains('liked')) {
+      btn.textContent = '❤️ ' + (num + 0.1).toFixed(1) + 'K';
+    } else {
+      btn.textContent = '❤️ ' + (num - 0.1).toFixed(1) + 'K';
+    }
+  }
+
+  // Filter buttons
+  function setFilter(el, label) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    showToast('Filter Applied', `Showing: ${label}`);
+  }
+
+  // Keyboard close
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+
+<!-- ═══════════════════════════════════════ SHORTS PAGE ═══ -->
+<div id="shortsPage">
+  <!-- topbar -->
+  <div class="shorts-topbar">
+    <div class="shorts-topbar-logo">GAME<span style="font-size:1.5em;color:var(--cyan);-webkit-text-fill-color:var(--cyan);">X</span> &nbsp;<span style="font-size:0.65rem;letter-spacing:0.2em;color:rgba(255,255,255,0.5);font-family:'Orbitron',monospace;">SHORTS</span></div>
+    <button class="shorts-close" onclick="closeShorts()" title="Close">✕</button>
+  </div>
+
+  <!-- reel feed -->
+  <div class="shorts-feed" id="shortsFeed">
+
+    <!-- REEL 1 -->
+    <div class="reel reel-theme-1" onclick="togglePause(this)" data-index="0">
+      <div class="reel-progress-bar"><div class="reel-progress-fill" id="prog0"></div></div>
+      <div class="reel-bg"><div class="reel-bg-emoji">🎮🔫💥</div></div>
+      <div class="reel-play-icon">▶</div>
+      <div class="reel-info">
+        <div class="reel-user">
+          <div class="reel-avatar av1">NS</div>
+          <span class="reel-username">NovaShadow</span>
+          <button class="reel-follow-btn" onclick="event.stopPropagation();toggleFollow(this)">+ Follow</button>
+        </div>
+        <div class="reel-caption">1v5 clutch on Valorant — they never saw it coming 🔥 insane flick at the end</div>
+        <div class="reel-tags"><span class="reel-tag">#Valorant</span><span class="reel-tag">#Clutch</span><span class="reel-tag">#GameX</span></div>
+      </div>
+      <div class="reel-actions">
+        <div class="reel-action-btn" onclick="event.stopPropagation();toggleLike(this)">
+          <div class="reel-action-icon">❤️</div>
+          <span class="reel-action-count">84.2K</span>
+        </div>
+        <div class="reel-action-btn" onclick="event.stopPropagation()">
+          <div class="reel-action-icon">💬</div>
+          <span class="reel-action-count">1.2K</span>
+        </div>
+        <div class="reel-action-btn" onclick="event.stopPropagation()">
+          <div class="reel-action-icon">↗️</div>
+          <span class="reel-action-count">Share</span>
+        </div>
+        <div class="reel-action-btn" onclick="event.stopPropagation()">
+          <div class="reel-action-icon">⋯</div>
+          <span class="reel-action-count">More</span>
+        </div>
+      </div>
+      <div class="reel-music">
+        <div class="reel-music-disc">🎵</div>
+        <span>Valorant Ace SFX — NovaShadow</span>
+      </div>
+      <div class="swipe-hint" id="swipeHint">
+        <div class="swipe-arrow">↑</div>
+        <span>Swipe up</span>
+      </div>
+    </div>
+
+    <!-- REEL 2 -->
+    <div class="reel reel-theme-3" onclick="togglePause(this)" data-index="1">
+      <div class="reel-progress-bar"><div class="reel-progress-fill" id="prog1"></div></div>
+      <div class="reel-bg"><div class="reel-bg-emoji">⚔️🐉🔥</div></div>
+      <div class="reel-play-icon">▶</div>
+      <div class="reel-info">
+        <div class="reel-user">
+          <div class="reel-avatar av2">RW</div>
+          <span class="reel-username">RuneWalker</span>
+          <button class="reel-follow-btn" onclick="event.stopPropagation();toggleFollow(this)">+ Follow</button>
+        </div>
+        <div class="reel-caption">Malenia cheese strat but it actually worked?? No hit run attempt 😭</div>
+        <div class="reel-tags"><span class="reel-tag">#EldenRing</span><span class="reel-tag">#NoHit</span><span class="reel-tag">#Malenia</span></div>
+      </div>
+      <div class="reel-actions">
+        <div class="reel-action-btn" onclick="event.stopPropagation();toggleLike(this)">
+          <div class="reel-action-icon">❤️</div>
+          <span class="reel-action-count">213K</span>
+        </div>
+        <div class="reel-action-btn" onclick="event.stopPropagation()">
+          <div class="reel-action-icon">💬</div>
+          <span class="reel-action-count">4.5K</span>
+        </div>
+        <div class="reel-action-btn" onclick="event.stopPropagation()">
+          <div class="reel-action-icon">↗️</div>
+          <span class="reel-action-count">Share</span>
+        </div>
+        <div class="reel-action-btn" onclick="event.stopPropagation()">
+          <div class="reel-action-icon">⋯</div>
+          <span class="reel-action-count">More</span>
+        </div>
+      </div>
+      <div class="reel-music">
+        <div class="reel-music-disc">🎵</div>
+        <span>Elden Ring OST — FromSoftware</span>
+      </div>
+    </div>
+
+    <!-- REEL 3 -->
+    <div class="reel reel-theme-2" onclick="togglePause(this)" data-index="2">
+      <div class="reel-progress-bar"><div class="reel-progress-fill" id="prog2"></div></div>
+      <div class="reel-bg"><div class="reel-bg-emoji">💣🎯🏆</div></div>
+      <div class="reel-play-icon">▶</div>
+      <div class="reel-info">
+        <div class="reel-user">
+          <div class="reel-avatar av3">SC</div>
+          <span class="reel-username">StormChaser99</span>
+          <button class="reel-follow-btn" onclick="event.stopPropagation();toggleFollow(this)">+ Follow</button>
+        </div>
+        <div class="reel-caption">CS2 — 5 deag through smoke before the round timer ends. LEGENDARY 🏆</div>
+        <div class="reel-tags"><span class="reel-tag">#CS2</span><span class="reel-tag">#Deagle</span><span class="reel-tag">#Legendary</span></div>
+      </div>
+      <div class="reel-actions">
+        <div class="reel-action-btn" onclick="event.stopPropagation();toggleLike(this)">
+          <div class="reel-action-icon">❤️</div>
+          <span class="reel-action-count">156K</span>
+        </div>
+        <div class="reel-action-btn" onclick="event.stopPropagation()">
+          <div class="reel-action-icon">💬</div>
+          <span class="reel-action-count">3.1K</span>
+        </div>
+        <div class="reel-action-btn" onclick="event.stopPropagation()">
+          <div class="reel-action-icon">↗️</div>
+          <span class="reel-action-count">Share</span>
+        </div>
+        <div class="reel-action-btn" onclick="event.stopPropagation()">
+          <div class="reel-action-icon">⋯</div>
+          <span class="reel-action-count">More</span>
+        </div>
+      </div>
+      <div class="reel-music">
+        <div class="reel-music-disc">🎵</div>
+        <span>Clutch Mode — StormChaser99</span>
+      </div>
+    </div>
+
+    <!-- REEL 4 -->
+    <div class="reel reel-theme-4" onclick="togglePause(this)" data-index="3">
+      <div class="reel-progress-bar"><div class="reel-progress-fill" id="prog3"></div></div>
+      <div class="reel-bg"><div class="reel-bg-emoji">🚁💀🎮</div></div>
+      <div class="reel-play-icon">▶</div>
+      <div class="reel-info">
+        <div class="reel-user">
+          <div class="reel-avatar av4">PR</div>
+          <span class="reel-username">PixelReaper</span>
+          <button class="reel-follow-btn" onclick="event.stopPropagation();toggleFollow(this)">+ Follow</button>
+        </div>
+        <div class="reel-caption">Warzone solo vs squad — final 3 kills in 4 seconds. My hands are SHAKING 🙌</div>
+        <div class="reel-tags"><span class="reel-tag">#Warzone</span><span class="reel-tag">#SoloVsSquad</span><span class="reel-tag">#Insane</span></div>
+      </div>
+      <div class="reel-actions">
+        <div class="reel-action-btn" onclick="event.stopPropagation();toggleLike(this)">
+          <div class="reel-action-icon">❤️</div>
+          <span class="reel-action-count">98.7K</span>
+        </div>
+        <div class="reel-action-btn" onclick="event.stopPropagation()">
+          <div class="reel-action-icon">💬</div>
+          <span class="reel-action-count">2.3K</span>
+        </div>
+        <div class="reel-action-btn" onclick="event.stopPropagation()">
+          <div class="reel-action-icon">↗️</div>
+          <span class="reel-action-count">Share</span>
+        </div>
+        <div class="reel-action-btn" onclick="event.stopPropagation()">
+          <div class="reel-action-icon">⋯</div>
+          <span class="reel-action-count">More</span>
+        </div>
+      </div>
+      <div class="reel-music">
+        <div class="reel-music-disc">🎵</div>
+        <span>Kill Feed — PixelReaper</span>
+      </div>
+    </div>
+
+    <!-- REEL 5 -->
+    <div class="reel reel-theme-5" onclick="togglePause(this)" data-index="4">
+      <div class="reel-progress-bar"><div class="reel-progress-fill" id="prog4"></div></div>
+      <div class="reel-bg"><div class="reel-bg-emoji">🦅🏹⚡</div></div>
+      <div class="reel-play-icon">▶</div>
+      <div class="reel-info">
+        <div class="reel-user">
+          <div class="reel-avatar av5">SG</div>
+          <span class="reel-username">StructureGod</span>
+          <button class="reel-follow-btn" onclick="event.stopPropagation();toggleFollow(this)">+ Follow</button>
+        </div>
+        <div class="reel-caption">Apex — 4K badge run with Pathfinder. Zip line physics broke the entire lobby 😂</div>
+        <div class="reel-tags"><span class="reel-tag">#Apex</span><span class="reel-tag">#4K</span><span class="reel-tag">#Pathfinder</span></div>
+      </div>
+      <div class="reel-actions">
+        <div class="reel-action-btn" onclick="event.stopPropagation();toggleLike(this)">
+          <div class="reel-action-icon">❤️</div>
+          <span class="reel-action-count">74.1K</span>
+        </div>
+        <div class="reel-action-btn" onclick="event.stopPropagation()">
+          <div class="reel-action-icon">💬</div>
+          <span class="reel-action-count">1.8K</span>
+        </div>
+        <div class="reel-action-btn" onclick="event.stopPropagation()">
+          <div class="reel-action-icon">↗️</div>
+          <span class="reel-action-count">Share</span>
+        </div>
+        <div class="reel-action-btn" onclick="event.stopPropagation()">
+          <div class="reel-action-icon">⋯</div>
+          <span class="reel-action-count">More</span>
+        </div>
+      </div>
+      <div class="reel-music">
+        <div class="reel-music-disc">🎵</div>
+        <span>Apex Arena Beats — StructureGod</span>
+      </div>
+    </div>
+
+    <!-- REEL 6 -->
+    <div class="reel reel-theme-6" onclick="togglePause(this)" data-index="5">
+      <div class="reel-progress-bar"><div class="reel-progress-fill" id="prog5"></div></div>
+      <div class="reel-bg"><div class="reel-bg-emoji">🏗️🧱💫</div></div>
+      <div class="reel-play-icon">▶</div>
+      <div class="reel-info">
+        <div class="reel-user">
+          <div class="reel-avatar av6">ZX</div>
+          <span class="reel-username">ZeroXKill</span>
+          <button class="reel-follow-btn" onclick="event.stopPropagation();toggleFollow(this)">+ Follow</button>
+        </div>
+        <div class="reel-caption">Fortnite edit speed at 300 edits/min — this is actual witchcraft 🪄🏗️</div>
+        <div class="reel-tags"><span class="reel-tag">#Fortnite</span><span class="reel-tag">#EditSpeed</span><span class="reel-tag">#Sweat</span></div>
+      </div>
+      <div class="reel-actions">
+        <div class="reel-action-btn" onclick="event.stopPropagation();toggleLike(this)">
+          <div class="reel-action-icon">❤️</div>
+          <span class="reel-action-count">321K</span>
+        </div>
+        <div class="reel-action-btn" onclick="event.stopPropagation()">
+          <div class="reel-action-icon">💬</div>
+          <span class="reel-action-count">9.4K</span>
+        </div>
+        <div class="reel-action-btn" onclick="event.stopPropagation()">
+          <div class="reel-action-icon">↗️</div>
+          <span class="reel-action-count">Share</span>
+        </div>
+        <div class="reel-action-btn" onclick="event.stopPropagation()">
+          <div class="reel-action-icon">⋯</div>
+          <span class="reel-action-count">More</span>
+        </div>
+      </div>
+      <div class="reel-music">
+        <div class="reel-music-disc">🎵</div>
+        <span>Build Battle Anthem — ZeroXKill</span>
+      </div>
+    </div>
+
+  </div><!-- /shorts-feed -->
+</div><!-- /shortsPage -->
+
+<!-- Side navigation dots -->
+<div class="shorts-dots" id="shortsDots">
+  <div class="shorts-dot active" onclick="scrollToReel(0)"></div>
+  <div class="shorts-dot" onclick="scrollToReel(1)"></div>
+  <div class="shorts-dot" onclick="scrollToReel(2)"></div>
+  <div class="shorts-dot" onclick="scrollToReel(3)"></div>
+  <div class="shorts-dot" onclick="scrollToReel(4)"></div>
+  <div class="shorts-dot" onclick="scrollToReel(5)"></div>
+</div>
+
+<script>
+// ── SHORTS LOGIC ──
+const REEL_DURATION = 15000; // ms per reel auto-progress simulation
+let shortsOpen = false;
+let currentReel = 0;
+let progressTimers = [];
+let progressValues = new Array(6).fill(0);
+let isPaused = false;
+
+function openShorts() {
+  document.getElementById('shortsPage').classList.add('open');
+  document.getElementById('shortsDots').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+  shortsOpen = true;
+  currentReel = 0;
+  startProgress(0);
+  updateDots(0);
+  // dismiss swipe hint after first scroll
+  setTimeout(() => {
+    const hint = document.getElementById('swipeHint');
+    if (hint) hint.classList.add('gone');
+  }, 3000);
+}
+
+function closeShorts() {
+  document.getElementById('shortsPage').classList.remove('open');
+  document.getElementById('shortsDots').classList.remove('visible');
+  document.body.style.overflow = '';
+  shortsOpen = false;
+  stopAllProgress();
+  // reset all progress bars
+  progressValues.fill(0);
+  document.querySelectorAll('.reel-progress-fill').forEach(el => el.style.width = '0%');
+  // reset all paused states
+  document.querySelectorAll('.reel').forEach(r => r.classList.remove('paused'));
+  isPaused = false;
+  // scroll back to top of feed
+  document.getElementById('shortsFeed').scrollTop = 0;
+}
+
+function togglePause(reel) {
+  isPaused = !isPaused;
+  reel.classList.toggle('paused', isPaused);
+  if (isPaused) {
+    stopAllProgress();
+  } else {
+    startProgress(currentReel);
+  }
+}
+
+function stopAllProgress() {
+  progressTimers.forEach(t => clearInterval(t));
+  progressTimers = [];
+}
+
+function startProgress(index) {
+  stopAllProgress();
+  if (index >= 6) return;
+  progressValues[index] = progressValues[index] || 0;
+  const fill = document.getElementById('prog' + index);
+  if (!fill) return;
+  const interval = 100;
+  const step = (interval / REEL_DURATION) * 100;
+  const timer = setInterval(() => {
+    if (isPaused) return;
+    progressValues[index] = Math.min(progressValues[index] + step, 100);
+    fill.style.width = progressValues[index] + '%';
+    if (progressValues[index] >= 100) {
+      clearInterval(timer);
+      // auto advance
+      const nextIndex = index + 1;
+      if (nextIndex < 6) {
+        scrollToReel(nextIndex);
+      }
+    }
+  }, interval);
+  progressTimers.push(timer);
+}
+
+function scrollToReel(index) {
+  const feed = document.getElementById('shortsFeed');
+  feed.scrollTo({ top: index * window.innerHeight, behavior: 'smooth' });
+}
+
+function updateDots(index) {
+  document.querySelectorAll('.shorts-dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === index);
+  });
+}
+
+// Observe which reel is visible via scroll snapping
+document.addEventListener('DOMContentLoaded', () => {
+  const feed = document.getElementById('shortsFeed');
+  feed.addEventListener('scroll', () => {
+    if (!shortsOpen) return;
+    const newIndex = Math.round(feed.scrollTop / window.innerHeight);
+    if (newIndex !== currentReel) {
+      currentReel = newIndex;
+      updateDots(currentReel);
+      isPaused = false;
+      document.querySelectorAll('.reel').forEach(r => r.classList.remove('paused'));
+      startProgress(currentReel);
+    }
+  }, { passive: true });
+});
+
+function toggleFollow(btn) {
+  btn.classList.toggle('following');
+  btn.textContent = btn.classList.contains('following') ? '✓ Following' : '+ Follow';
+}
+
+function toggleLike(btn) {
+  btn.classList.toggle('liked');
+  const countEl = btn.querySelector('.reel-action-count');
+  const raw = countEl.textContent;
+  const num = parseFloat(raw.replace('K',''));
+  if (btn.classList.contains('liked')) {
+    countEl.textContent = (num + 0.1).toFixed(1) + 'K';
+  } else {
+    countEl.textContent = (num - 0.1).toFixed(1) + 'K';
+  }
+}
+
+// ESC key to close shorts
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && shortsOpen) closeShorts();
+  if (e.key === 'ArrowDown' && shortsOpen) scrollToReel(Math.min(currentReel + 1, 5));
+  if (e.key === 'ArrowUp' && shortsOpen) scrollToReel(Math.max(currentReel - 1, 0));
+});
+</script>
+
+</body>
+</html>
